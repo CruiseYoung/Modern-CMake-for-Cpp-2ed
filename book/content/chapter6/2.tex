@@ -4,7 +4,7 @@ CMake在三个阶段构建解决方案：配置、生成和运行构建工具。
 
 那如何解决这类问题呢？一个解决方案是为这个信息创建一个占位符，并将其计算推迟到下一个阶段——生成阶段。
 
-这正是生成器表达式（也称为“genexes”）所做的。其围绕目标属性构建，如LINK\_LIBRARIES、INCLUDE\_DIRECTORIES、COMPILE\_DEFINITIONS，以及传播属性(尽管不是全部)，其遵循类似于条件语句和变量计算的规则。
+这正是生成器表达式（也称为“genexes”）所做的。其主要围绕目标属性（如LINK\_LIBRARIES、INCLUDE\_DIRECTORIES、COMPILE\_DEFINITIONS）及传播属性创建，遵循类似于条件语句和变量计算的规则。
 
 \begin{myNotic}{Note}
 生成器表达式将在生成阶段进行计算（配置完成且构建系统创建后），所以将它们的输出捕获到变量，并输出到控制台并不是直接的操作。

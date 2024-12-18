@@ -74,38 +74,42 @@ cmake -{}-install 没有 -{}-component 参数将安装lib和headers组件。
 cmake -{}-install -{}-component headers 将只安装公共头文件。
 
 \item
-cmake -{}-install -{}-component extra 将打印一个否则无法访问的消息（EXCLUDE\_FROM\_ALL关键字阻止了这一点）。
+cmake -{}-install -{}-component extra 将打印一条消息，其他命令不会打印（EXCLUDE\_FROM\_ALL关键字阻止了这一点）。
 \end{itemize}
 
 如果没有为安装的工件指定COMPONENT关键字，它默认为未指定，由CMAKE\_INSTALL\_DEFAULT\_COMPONENT\_NAME变量定义。
 
 \begin{myNotic}{Note}
-由于无法从cmake命令行列出所有可用组件，因此彻底记录包组件对于用户来说可能非常有帮助。安装"README"文件是放置这些信息的绝佳位置。
+由于无法从cmake命令行列出所有可用组件，因此记录包的所有组件对于用户来说可能非常有帮助。安装"README"文件是放置这些信息的绝佳位置。
 \end{myNotic}
 
 如果cmake使用-{}-component参数调用一个不存在的组件，命令将成功完成，不会有警告或错误，但不会安装任何东西。
 
-将我们的安装分区为组件，允许用户选择性地安装包的部分。现在来管理版本化共享库的符号链接，这是一个优化你的安装过程的有用功能。
+将我们的安装划分为组件，使得用户可以选择性地安装包的某一部分。现在来管理版本化共享库的符号链接，这是一个优化你的安装过程的有用功能。
 
 \mySubsubsection{14.5.3.}{管理版本化共享库的符号链接}
 
-安装的目标平台可以使用符号链接，来帮助链接器发现共享库的当前安装版本。创建lib<name>后。所以符号链接到lib<name>。
+有些安装的目标平台可以使用符号链接，来帮助链接器发现共享库的当前安装版本。如通常创建 lib<name>.so 符号链接链接到 lib<name>.so.1 实际库文件（可以使用set_property()指令给动态库目标指定版本，这时该目标包含有数字后缀的实际库文件和无数字后缀的链接到实际库文件的符号链接），之后就可以通过向链接器统一传递 -l<name> 参数（不需要指定共享库的版本后缀）来链接这样的库。
 
-.so.1 文件是指共享库的一种符号链接形式，通常用于版本管理。可以通过向链接器传递 -l<name> 参数来链接这样的库。CMake 的 install(TARGETS <target> LIBRARY) 块处理了在必要时创建这类符号链接的工作。可以选择将这一步骤移到另一个 install() 命令中，通过在这个块中添加 NAMELINK\_SKIP 来实现：
+CMake 的 install(TARGETS <target> LIBRARY) 在安装时会同时安装符号链接和实际库文件。也可以只安装实际库文件，将符号链接的安装移到另一个 install() 命令中。这通过在这个块中添加 NAMELINK\_SKIP 来实现：
 
 \begin{shell}
 install(TARGETS <target> LIBRARY
         COMPONENT cmp NAMELINK_SKIP)
 \end{shell}
 
-如果要将符号链接分配给另一个组件而不是完全禁用，可以再次使用 install() 命令对同一个目标进行安装，并指定不同的组件，后面跟上 NAMELINK\_ONLY 关键词：
+以上指令在执行安装时，只会安装 <target> 中的实际库文件，且 cmp 组件中只包含实际库文件。
+
+可以使用有 NAMELINK\_ONLY 关键词的 install() 命令只安装符号链接文件：
 
 \begin{shell}
 install(TARGETS <target> LIBRARY
         COMPONENT lnk NAMELINK_ONLY)
 \end{shell}
 
-同样的效果也可以通过使用 NAMELINK\_COMPONENT 关键词来达到：
+以上指令在执行安装时，只会安装 <target> 中的符号链接，且 lnk 组件中只包含符号链接。
+
+以上的效果也可以通过使用 NAMELINK\_COMPONENT 关键词来达到。以下命令执行后，会同时安装 <target> 中的实际库文件和符号链接，但是 cmp 组件中只包含实际库文件， lnk 组件中只包含符号链接：
 
 \begin{shell}
 install(TARGETS <target> LIBRARY

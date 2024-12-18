@@ -123,7 +123,7 @@ cacheVariables: 一个映射/map，定义了缓存变量；值支持宏。
 
 \mySubsubsection{16.4.3.}{定义构建阶段预设}
 
-不会惊讶于发现构建预设位于 buildPresets 数组中。可以通过向命令行添加 -{}-list-presets 参数来列出它们，具体针对构建阶段：
+不会惊讶于发现构建预设位于 buildPresets 数组中。可以通过在执行构建时向命令行添加 -{}-list-presets 参数来列出它们：
 
 \begin{shell}
 cmake --build --list-presets
@@ -363,7 +363,7 @@ noTestsAction: 一个字符串，定义如果没有找到测试时的动作，�
 
 \mySubsubsection{16.4.5.}{定义打包阶段预设}
 
-打包预设是在第 6 版架构中引入的，所以需要至少使用 CMake 3.25 才能使用它们。这些预设应该包含在 packagePresets 数组中，也可以通过向命令行追加 -{}-list-presets 参数来显示，具体针对打包阶段：
+打包预设是在第 6 版架构中引入的，所以需要至少使用 CMake 3.25 才能使用它们。这些预设应该包含在 packagePresets 数组中，也可以在执行打包命令时，添加 -{}-list-presets 参数来列出所有打包预设：
 
 \begin{shell}
 cpack --list-presets

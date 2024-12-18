@@ -28,11 +28,11 @@ $ apt update
 $ apt install protobuf-compiler libprotobuf-dev
 \end{shell}
 
-如今，许多项目选择支持CMake，通过创建配置文件，并在安装过程中将其放入适当的系统目录来进行。配置文件是选择支持CMake的项目的基本部分。
+如今，许多项目选择支持CMake。它们会在安装过程中创建配置文件，并将其放入适当的系统目录，CMake基于创建的配置文件使用这些库。
 
-如果想使用一个没有配置文件的库，请不要担心。CMake支持一种外部机制来查找此类库，称为find模块。与配置文件不同，find模块不是帮助定位的项目的一部分。实际上，CMake本身通常带有这些find模块，用于许多流行的库。
+如果想使用一个没有配置文件的库，请不要担心。CMake提供了一种机制以查找此类库，称为find模块。与基于配置文件查找库不同，find模块是CMake内置的功能，其中包含许多流行的库。当需要使用PackageName库时，其对应的find模块是一个可以被find\_package()命令加载的Find<PackageName>.cmake文件。
 
-如果陷入困境，既没有配置文件也没有find模块，也还有其他选择：
+如果需要的库既没有配置文件也没有find模块，也还有其他选择：
 
 \begin{itemize}
 \item
@@ -47,7 +47,7 @@ $ apt install protobuf-compiler libprotobuf-dev
 
 可能认为没有准备好自己创建这样的合并请求，很可能不需要这样做。CMake自带了150多个find模块，可以找到如Boost、bzip2、curl、curses、GIF、GTK、iconv、ImageMagick、JPEG、Lua、OpenGL、OpenSSL、PNG、PostgreSQL、Qt、SDL、Threads、XML-RPC、X11和zlib等库，以及在此示例中将使用的Protobuf文件。完整的列表可以在CMake文档中找到（请参阅“扩展阅读”）。
 
-find模块和配置文件都可以与CMake的find\_package()命令一起使用，CMake首先检查其内置的find模块。如果找不到所需的模块，会继续检查不同包提供的配置文件。CMake扫描通常安装包的路径（取决于操作系统），查找匹配以下模式的文件：
+find模块和配置文件都可以使用CMake的find\_package()命令查找。当使用该命令查找一个库时，首先检查CMake是否包含对应的find模块。如果CMake没有找到所需的find模块，会查找是否有满足要求的配置文件，即扫描常用安装包的路径（取决于操作系统），查找类似以下的文件：
 
 \begin{itemize}
 \item
@@ -200,7 +200,7 @@ find_package(<Name> [version] [EXACT] [QUIET] [REQUIRED])
 
 \begin{itemize}
 \item
-[version] 这指定了需要的包的最小版本，格式为major.minor.patch.tweak（例如1.22）。还可以指定一个范围，如1.22…1.40.1，使用三个点作为分隔符。
+version: 这指定了需要的包的最小版本，格式为major.minor.patch.tweak（例如1.22）。还可以指定一个范围，如1.22…1.40.1，使用三个点作为分隔符。
 
 \item
 EXACT: 与非范围[version]一起使用，告诉CMake需要确切的版本，而不是更新的版本。
