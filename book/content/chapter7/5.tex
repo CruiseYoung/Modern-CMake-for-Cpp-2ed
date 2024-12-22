@@ -56,7 +56,7 @@ main.cpp文件中，不需要包含cmake\_pch.h或其他头文件 - CMake会使�
 header.h (直接路径)将解析为相对于当前源目录的路径，并将使用绝对路径包含。
 
 \item
-[["header.h"]]（双括号和引号）路径将根据目标的INCLUDE\_DIRECTORIES属性进行扫描，该属性可以使用target\_include\_directiories()进行配置。
+使用[["header.h"]]（双括号和引号）时，路径将根据目标的INCLUDE\_DIRECTORIES属性进行扫描，该属性可以使用target\_include\_directiories()进行配置。
 \end{itemize}
 
 一些在线参考资料可能不鼓励预编译不是标准库（如）一部分的头文件，或者根本不使用预编译头文件。这是因为更改列表或编辑自定义头文件，将导致目标中的所有翻译单元重新编译。使用CMake，这个问题并不严重，特别是已经正确地结构化项目（具有相对较小的目标，专注于狭窄的领域）。每个目标都有一个单独的预编译头文件，这限制了头文件更改的影响。
@@ -267,7 +267,7 @@ CMAKE\_CXX\_FLAGS\_RELEASE 包含 -DNDEBUG
 
 -g标志的意思是“添加调试信息”，以操作系统的原生格式提供：stabs、COFF、XCOFF或DWARF。这些格式随后可以被像gdb（GNU调试器）这样的调试器访问。通常，这对像CLion这样的IDE来说已经足够了（后台使用gdb）。其他情况下，请参考提供的调试器手册，并了解选择的编译器的适当标志。
 
-对于Release配置，CMake将添加-DNDEBUG标志。这是一个预处理器定义——不是调试构建”这个选项会禁用一些面向调试的宏。其中之一是assert，在<assert.h>头文件中可用。如果决定在生产代码中使用断言，其将不起作用：
+对于Release配置，CMake将添加-DNDEBUG标志。这是一个预处理器定义——“非调试构建”，这个选项会禁用一些面向调试的宏。其中之一是assert，在<assert.h>头文件中可用。如果在生产代码中使用断言，其将不起作用：
 
 \begin{cpp}
 int main(void)

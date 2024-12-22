@@ -37,7 +37,7 @@ target_compile_definitions(foo PUBLIC BAR=$<TARGET_FILE:baz>)
 
 \mySubsubsection{6.3.1.}{嵌套}
 
-将生成器表达式作为参数，传递给另一个生成器表达式的能力开始介绍，这也就是生成器表达式的嵌套：
+让我们从生成式表达式的嵌套开始介绍。即支持将生成器表达式作为参数，传递给另一个生成器表达式：
 
 \begin{shell}
 $<UPPER_CASE:$<PLATFORM_ID>>

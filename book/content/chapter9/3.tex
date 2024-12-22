@@ -209,10 +209,10 @@ FetchContent_Declare(dependency-id
 
 \begin{itemize}
 \item
-URL\_HASH <algo>=<hashValue>: 检查会通过，生成的下载文件的校验和是否与提供的 <hashValue>匹配。推荐使用此选项以保证下载的完整性。以下算法受支持：: MD5, SHA1, SHA224, SHA256, SHA384, SHA512, SHA3\_224, SHA3\_256, SHA3\_384和SHA3\_512
+URL\_HASH <algo>=<hashValue>: 检查下载文件的校验和是否与提供的<hashValue>匹配。推荐使用此选项以保证下载的完整性。支持以下算法：: MD5, SHA1, SHA224, SHA256, SHA384, SHA512, SHA3\_224, SHA3\_256, SHA3\_384和SHA3\_512
 
 \item
-DOWNLOAD\_NO\_EXTRACT <bool>: 这会显式禁用下载后的解压，可以在后续步骤中通过访问 <DOWNLOADED\_FILE> 变量来使用下载文件的文件名。
+DOWNLOAD\_NO\_EXTRACT <bool>: 显式禁用下载后的解压，可以在后续步骤中通过访问 <DOWNLOADED\_FILE> 变量来使用下载文件的文件名。
 
 \item
 DOWNLOAD\_NO\_PROGRESS <bool>: 这会显式禁用下载进度的日志记录。

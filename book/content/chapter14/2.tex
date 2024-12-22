@@ -1,6 +1,6 @@
-我们如何使项目A的目标对项目B可用？通常，我们会使用find\_package()命令，但这需要创建一个包并在系统上安装。虽然这种方法很有用，但它涉及到一些工作。有时候，我们只是需要一个快速构建项目，并使其目标对其他项目可用。
+我们如何使项目A的目标对项目B可用？通常，我们会使用find\_package()命令，但这需要创建一个包并在系统上安装。虽然这种方法有用，但是略显麻烦。有时，我们构建一个项目后，希望有一种简单的方法使得项目中的目标可以被其他项目使用。
 
-一种节省时间的方法是在项目B中包含项目A的主列表文件，该文件已经包含了所有目标定义。然而，这个文件可能还包括全局配置、具有副作用的CMake命令、额外的依赖项，以及B项目可能不需要的目标（比如单元测试）。所以，这不是最好的方法。相反，可以为项目B提供一个目标导出文件，通过include()命令包含：
+一种简单的方法是直接在项目B中包含项目A的主CMakeLists.txt，该文件中包含了所有目标定义。然而，这个文件还会包括全局配置、具有副作用的CMake命令、额外的依赖项，以及B项目可能不需要的目标（比如单元测试）。因此，这种方法并不太好。我们可以使用如下的方式，在项目A中导出一个.cmake文件（称为目标导出文件），然后在项目B中通过include()命令包含该文件，实现该目的：
 
 \begin{cmake}
 cmake_minimum_required(VERSION 3.26.0)
@@ -8,9 +8,9 @@ project(B)
 include(/path/to/A/TargetsOfA.cmake)
 \end{cmake}
 
-使用add\_library()和add\_executable()等命令定义A的所有目标，并设置正确的属性。
+项目A的目标导出文件中包含使用add\_library()和add\_executable()等命令定义的所有目标，并包含为这些目标设置的属性。
 
-必须在TARGETS关键字后指定要导出的所有目标，并在FILE后提供目标文件名。其他参数是可选的：
+项目A中使用如下命令生成目标导出文件，命令中必须在TARGETS关键字后指定要导出的所有目标，并在FILE后提供目标文件名。其他参数是可选的：
 
 \begin{shell}
 export(TARGETS [target1 [target2 [...]]]
@@ -19,17 +19,17 @@ export(TARGETS [target1 [target2 [...]]]
 )
 \end{shell}
 
-以下是各个参数的解释：
+其中的参数：
 
 \begin{itemize}
 \item
-NAMESPACE推荐用来指示目标是从其他项目导入的。
+NAMESPACE: 目标导出文件中，所有目标前都会包含NAMESPACE指定的前缀，这些目标被导入其他项目使用时，也应该包含该前缀。推荐为导出的目标都指定前缀，以在使用时可以知道目标是从其他项目导入的。
 
 \item
-APPEND防止CMake在写入前清除文件内容。
+APPEND: 将导出的内容追加到 FILE 指定的文件，避免写入前清除原文件的内容。
 
 \item
-EXPORT\_LINK\_INTERFACE\_LIBRARIES导出目标的链接依赖项（包括导入的和特定配置的变体）。
+EXPORT\_LINK\_INTERFACE\_LIBRARIES: 同时导出目标的链接依赖项（包括导入的和特定配置的变体）。
 \end{itemize}
 
 让我们将这种导出方法应用到Calc库示例中，该库提供了两个简单的方法：
@@ -42,7 +42,7 @@ int Sum(int a, int b);
 int Multiply(int a, int b);
 \end{cpp}
 
-我们需要声明Calc目标以便我们有东西可以导出：
+首先需要声明Calc目标以便我们有东西可以导出：
 
 \filename{ch14/01-export/src/CMakeLists.txt}
 
@@ -57,7 +57,7 @@ target_include_directories(calc INTERFACE include)
 
 \begin{cmake}
 cmake_minimum_required(VERSION 3.26)
-project(ExportCalcCXX)
+project(ExportCalc CXX)
 add_subdirectory(src bin)
 set(EXPORT_DIR "${CMAKE_CURRENT_BINARY_DIR}/cmake")
 export(TARGETS calc
@@ -66,7 +66,7 @@ export(TARGETS calc
 )
 \end{cmake}
 
-导出目标声明文件将位于构建树的cmake子目录中（遵循.cmake文件的约定），为了避免稍后重复路径，我们将其设置在EXPORT\_DIR变量中。然后，调用export()来生成目标声明文件CalcTargets.cmake，其中包含calc目标。对于包含这个文件的项目，可以直接使用Calc::calc。
+如果想要将目标声明文件导到构建树的cmake子目录中（遵循.cmake文件的约定），为了能够复用路径，将出目录路径设置在EXPORT\_DIR变量中。然后，调用export()来生成目标声明文件CalcTargets.cmake，其中包含了定义的calc目标。对于使用include包含这个文件的项目，可以直接通过Calc::calc使用目标。
 
 注意，这个导出文件还不是一个包。更重要的是，这个文件中的所有路径都是绝对路径，并且硬编码到构建树中，这使得它们不可重定位。
 
