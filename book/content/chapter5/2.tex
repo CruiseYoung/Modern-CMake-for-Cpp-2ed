@@ -382,7 +382,7 @@ add_library(destination empty.cpp)
 target_link_libraries(destination source1 source2)
 \end{cmake}
 
-这里，创建了三个目标；为了简化，所有目标都使用相同的空源文件。在两个源目标上，指定了带有INTERFACE\_前缀的自定义属性，并将其设置为相同的匹配库版本。两个源目标都链接到相应的目标。最后，我们指定了字符串兼容性作为source1的属性（这里没有添加INTERFACE\_前缀，因为使用target_link\_libraries链接库文件时，会将类似INTERFACE\_LIB\_VERSION的属性值追加到destination的LIB\_VERSION属性）。
+这里，创建了三个目标；为了简化，所有目标都使用相同的空源文件。在两个源目标上，指定了带有INTERFACE\_前缀的自定义属性，并将其设置为相同的匹配库版本。两个源目标都链接到相应的目标。最后，我们指定了字符串兼容性作为source1的属性（这里没有添加INTERFACE\_前缀，因为使用target\_link\_libraries链接库文件时，会将类似INTERFACE\_LIB\_VERSION的属性值追加到destination的LIB\_VERSION属性）。
 
 CMake将这个自定义属性传播到相应目标，并检查所有源目标的版本是否完全匹配（兼容性属性只需在目标目标上设置一次）。
 
